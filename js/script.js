@@ -158,7 +158,9 @@ function fuckingAdv() {
 
 function copyOff() {
     document.addEventListener('copy', (event) => {
-        event.preventDefault();
+        console.log(event)
+        event.clipboardData.setData("text/plain", "nononono :P");
+        event.preventDefault()
     }, false);
 }
 
