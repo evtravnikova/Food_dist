@@ -40,34 +40,33 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
     //Timer
-    const deadline = '2022-11-28';
+    const endTime = '2022-10-10 13:11:00';
 
-    function getTimeRemaining(endTime) {
-        let t = Date.parse(endTime) - Date.parse(new Date());
+    function getTimeRemainder(deadline) {
         let days, hours, minutes, seconds;
+        const timeToDeadline = Date.parse(deadline) - Date.parse(new Date());
 
-        if (t <= 0) {
+        if (timeToDeadline <= 0) {
             days = 0;
             hours = 0;
             minutes = 0;
             seconds = 0
         } else {
-            days = Math.floor(t / (1000 * 60 * 60 * 24));
-            hours = Math.floor((t / (1000 * 60 * 60)) % 24);
-            minutes = Math.floor(t / (1000 * 60) % 60);
-            seconds = Math.floor((t / 1000) % 60);
+            days = Math.floor(timeToDeadline / (1000 * 60 * 60 * 24));
+            hours = Math.floor(timeToDeadline / (1000 * 60 * 60) % 24);
+            minutes = Math.floor(timeToDeadline / (1000 * 60) % 60);
+            seconds = Math.floor((timeToDeadline / 1000) % 60);
         }
         return {
-            'total': t,
+            'timeToDeadline': timeToDeadline,
             'days': days,
             'hours': hours,
             'minutes': minutes,
             'seconds': seconds
-        };
+        }
     }
 
-
-    function getZero(num) {
+    function addZero(num) {
         if (num >= 0 && num < 10) {
             return `0${num}`
         } else {
@@ -75,29 +74,28 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function setClock(selector, endTime) {
+    function setClock(selector, deadLine) {
         const timer = document.querySelector(selector);
         const days = timer.querySelector('#days');
         const hours = timer.querySelector('#hours');
         const minutes = timer.querySelector('#minutes');
         const seconds = timer.querySelector('#seconds');
-        const timeInterval = setInterval(updateClock, 1000);
-
+        const timeInterval = setInterval(updateClock, 1000)
+        
         updateClock();
-
+        
         function updateClock() {
-            const t = getTimeRemaining(endTime);
-            days.innerHTML = getZero(t.days);
-            hours.innerHTML = getZero(t.hours);
-            minutes.innerHTML = getZero(t.minutes);
-            seconds.innerHTML = getZero(t.seconds);
-
-            if (t.total <= 0) {
-                clearInterval(timeInterval);
+            const timeObject = getTimeRemainder(endTime);
+            days.innerHTML = addZero(timeObject.days);
+            hours.innerHTML = addZero(timeObject.hours);
+            minutes.innerHTML = addZero(timeObject.minutes);
+            seconds.innerHTML = addZero(timeObject.seconds);
+            
+            if (timer.timeToDeadline <= 0) {
+                clearInterval(timeInterval)
             }
         }
     }
-
-    setClock('.timer', deadline)
-
+    setClock('.timer', endTime)
+    console.log(new Date())
 });
