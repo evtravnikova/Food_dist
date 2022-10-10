@@ -4,7 +4,8 @@ window.addEventListener('DOMContentLoaded', () => {
     const endTime = '2022-10-13 14:00:00';
     setClock('.timer', endTime);
     showModalWindow();
-    fuckingAdv();
+    //fuckingAdv();
+    copyOff()
 });
 
 
@@ -155,7 +156,11 @@ function fuckingAdv() {
         }, {once: true})
     }
 
-
+function copyOff() {
+    document.addEventListener('copy', (event) => {
+        event.preventDefault();
+    }, false);
+}
 
 
 
