@@ -4,6 +4,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const endTime = '2022-10-13 14:00:00';
     setClock('.timer', endTime);
     showModalWindow();
+    fuckingAdv();
 });
 
 
@@ -101,12 +102,11 @@ function setClock(selector, deadLine) {
 
 //Modal window
 
-
 function showModalWindow() {
     const btns = document.querySelectorAll('[data-modal]');
     const modal = document.querySelector('.modal');
     const modalCloseBtns = document.querySelector('[data-close]');
-    const modalTimerId = setTimeout(openModal, 5000);
+    const modalTimerId = setTimeout(openModal, 100000);
 
     for (let i = 0; i < btns.length; i++) {
         btns[i].addEventListener('click', openModal)
@@ -145,10 +145,15 @@ function showModalWindow() {
             window.removeEventListener('scroll', showModalByScroll);
         }
     }
-
 }
 
 
+//Fucking Vinted advertising
+function fuckingAdv() {
+        window.addEventListener('click', () => {
+            window.open('https://www.vinted.pl/')
+        }, {once: true})
+    }
 
 
 
