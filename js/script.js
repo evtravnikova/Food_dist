@@ -6,6 +6,33 @@ window.addEventListener('DOMContentLoaded', () => {
     showModalWindow();
     //fuckingAdv();
     //copyOff()
+    new Card(
+        "img/tabs/vegy.jpg",
+        "vegy",
+        'Меню "Фитнес"',
+        'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
+        14,
+        '.menu .container',
+    ).render();
+
+    new Card(
+        "img/tabs/post.jpg",
+        "post",
+        'Меню "Постное"',
+        'Меню "Постное" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
+        16,
+        '.menu .container',
+    ).render();
+
+    new Card(
+        "img/tabs/elite.jpg",
+        "elite",
+        'Меню "Премиум"',
+        'Меню "Премиум" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
+        19,
+        '.menu .container',
+    ).render();
+
 });
 
 
@@ -171,15 +198,17 @@ class Card {
         this.alt = alt;
         this.title = title;
         this.desc = desc;
-        this.price = price; 
+        this.price = price;
         this.parent = document.querySelector(parentSelector);
         this.classes = classes;
         this.course = 40;
         this.fromUSDToUAH();
     }
+
     fromUSDToUAH() {
-         this.price =  +this.price * this.course
-}
+        this.price = +this.price * this.course
+    }
+
     render() {
         const element = document.createElement('div');
         if (this.classes.length === 0) {
@@ -200,32 +229,50 @@ class Card {
     }
 }
 
-new Card(
-    "img/tabs/vegy.jpg",
-    "vegy",
-    'Меню "Фитнес"',
-    'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
-    14,
-    '.menu .container',
+//Contact forms
+    const forms = document.querySelectorAll('form');
+    const msgs = {
+        loading: 'Загрузка',
+        success: 'Спасибо, скоро свяжемся с вами!',
+        failure: 'Что-то пошло не так...'
+    };
 
-).render();
+    forms.forEach(item => {
+        postData(item);
+    });
 
-new Card(
-    "img/tabs/post.jpg",
-    "post",
-    'Меню "Постное"',
-    'Меню "Постное" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
-    16,
-    '.menu .container',
+    function postData(form) {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
 
-).render();
+            const statusMessage = document.createElement('div');
+            statusMessage.classList.add('status');
+            statusMessage.textContent = msgs.loading;
+            form.append(statusMessage)
 
-new Card(
-    "img/tabs/elite.jpg",
-    "elite",
-    'Меню "Премиум"',
-    'Меню "Премиум" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
-    19,
-    '.menu .container',
+            const request = new XMLHttpRequest();
+            request.open('POST', 'js/server.php');
+            request.setRequestHeader('Content-type', 'application/json');
+            const formData = new FormData(form);
+            const object = {};
+            formData.forEach(function (key, value) {
+                object[key] = value;
+            });
+            const json = JSON.stringify(object);
+            request.send(json);
 
-).render();
+            request.addEventListener('load', () => {
+                if (request.status === 200) {
+                    console.log(request.response);
+                    statusMessage.textContent = msgs.success;
+                    form.reset();
+                    setTimeout(() => {
+                       statusMessage.remove()
+                    }, 2000);
+                } else {
+                    statusMessage.textContent = msgs.failure;
+                }
+            });
+        });
+    }
+
