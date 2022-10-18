@@ -3,35 +3,11 @@ window.addEventListener('DOMContentLoaded', () => {
     showTabContent();
     const endTime = '2022-10-13 14:00:00';
     setClock('.timer', endTime);
-    showModalWindow();
     //fuckingAdv();
     //copyOff()
-    new Card(
-        "img/tabs/vegy.jpg",
-        "vegy",
-        'Меню "Фитнес"',
-        'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
-        14,
-        '.menu .container',
-    ).render();
-
-    new Card(
-        "img/tabs/post.jpg",
-        "post",
-        'Меню "Постное"',
-        'Меню "Постное" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
-        16,
-        '.menu .container',
-    ).render();
-
-    new Card(
-        "img/tabs/elite.jpg",
-        "elite",
-        'Меню "Премиум"',
-        'Меню "Премиум" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
-        19,
-        '.menu .container',
-    ).render();
+    new Card("img/tabs/vegy.jpg", "vegy", 'Меню "Фитнес"', 'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!', 14, '.menu .container',).render();
+    new Card("img/tabs/post.jpg", "post", 'Меню "Постное"', 'Меню "Постное" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!', 16, '.menu .container',).render();
+    new Card("img/tabs/elite.jpg", "elite", 'Меню "Премиум"', 'Меню "Премиум" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!', 19, '.menu .container',).render();
 
 });
 
@@ -89,11 +65,7 @@ function getTimeRemainder(deadline) {
         seconds = Math.floor((timeToDeadline / 1000) % 60);
     }
     return {
-        'timeToDeadline': timeToDeadline,
-        'days': days,
-        'hours': hours,
-        'minutes': minutes,
-        'seconds': seconds
+        'timeToDeadline': timeToDeadline, 'days': days, 'hours': hours, 'minutes': minutes, 'seconds': seconds
     }
 }
 
@@ -129,50 +101,39 @@ function setClock(selector, deadLine) {
 }
 
 //Modal window
-function showModalWindow() {
-    const btns = document.querySelectorAll('[data-modal]');
-    const modal = document.querySelector('.modal');
-    const modalCloseBtns = document.querySelector('[data-close]');
-    const modalTimerId = setTimeout(openModal, 100000);
+const modalTrigger = document.querySelectorAll('[data-modal]'),
+    modal = document.querySelector('.modal');
 
-    for (let i = 0; i < btns.length; i++) {
-        btns[i].addEventListener('click', openModal)
-    }
+modalTrigger.forEach(btn => {
+    btn.addEventListener('click', openModal);
+});
 
-    modalCloseBtns.addEventListener('click', closeModal);
-
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal && modal.classList.contains('show')) {
-            closeModal()
-        }
-    });
-
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.classList.contains('show')) {
-            closeModal()
-        }
-    });
-
-    window.addEventListener('scroll', showModalByScroll);
-
-    function openModal() {
-        modal.classList.toggle('show');
-        document.body.style.overflow = 'hidden';
-        clearInterval(modalTimerId)
-    }
-
-    function closeModal() {
-        modal.classList.toggle('show');
-        document.body.style.overflow = '';
-    }
-
-    function showModalByScroll() {
-        if (window.scrollY + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
-            openModal();
-            window.removeEventListener('scroll', showModalByScroll);
-        }
-    }
+function closeModal() {
+    modal.classList.add('hide');
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
 }
+
+function openModal() {
+    modal.classList.add('show');
+    modal.classList.remove('hide');
+    document.body.style.overflow = 'hidden';
+    clearInterval(modalTimerId);
+}
+
+modal.addEventListener('click', (e) => {
+    if (e.target === modal || e.target.getAttribute('data-close') === "") {
+        closeModal();
+    }
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.code === "Escape" && modal.classList.contains('show')) {
+        closeModal();
+    }
+});
+
+const modalTimerId = setTimeout(openModal, 300000);
 
 
 //Fucking Vinted advertising
@@ -230,49 +191,74 @@ class Card {
 }
 
 //Contact forms
-    const forms = document.querySelectorAll('form');
-    const msgs = {
-        loading: 'Загрузка',
-        success: 'Спасибо, скоро свяжемся с вами!',
-        failure: 'Что-то пошло не так...'
-    };
+const forms = document.querySelectorAll('form');
+const msgs = {
+    loading: 'img/form/spinner.svg', success: 'Спасибо, скоро свяжемся с вами!', failure: 'Что-то пошло не так...'
+};
 
-    forms.forEach(item => {
-        postData(item);
-    });
+forms.forEach(item => {
+    postData(item);
+});
 
-    function postData(form) {
-        form.addEventListener('submit', (e) => {
+function postData(form) {
+    form.addEventListener('submit', (e) => {
             e.preventDefault();
 
-            const statusMessage = document.createElement('div');
-            statusMessage.classList.add('status');
-            statusMessage.textContent = msgs.loading;
-            form.append(statusMessage)
-
-            const request = new XMLHttpRequest();
-            request.open('POST', 'js/server.php');
-            request.setRequestHeader('Content-type', 'application/json');
+            const statusMessage = document.createElement('img');
+            statusMessage.src = msgs.loading;
+            statusMessage.style.cssText = `
+        display: block;
+        margin: 0 auto;`;
+            //form.append(statusMessage)
+            form.insertAdjacentElement("afterend", statusMessage);
             const formData = new FormData(form);
+
             const object = {};
-            formData.forEach(function (key, value) {
+            formData.forEach(function (value, key) {
                 object[key] = value;
             });
-            const json = JSON.stringify(object);
-            request.send(json);
 
-            request.addEventListener('load', () => {
-                if (request.status === 200) {
-                    console.log(request.response);
-                    statusMessage.textContent = msgs.success;
+            fetch('js/server.php', {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json; charset=utf-8'
+                },
+                body: JSON.stringify(object)
+            })
+                .then(data => data.text())
+                .then(data => {
+                    console.log(data);
+                    showThanksModal(msgs.success);
+                    statusMessage.remove();
+                })
+                .catch(() => {
+                    showThanksModal(msgs.failure);
+                })
+                .finally(() => {
                     form.reset();
-                    setTimeout(() => {
-                       statusMessage.remove()
-                    }, 2000);
-                } else {
-                    statusMessage.textContent = msgs.failure;
-                }
-            });
-        });
-    }
+                })
+        }
+    )
+    ;
+}
+
+function showThanksModal(message) {
+    const prevModalDialog = document.querySelector('.modal__dialog');
+    prevModalDialog.classList.add('hide');
+    openModal();
+
+    const thanksModal = document.createElement('div');
+    thanksModal.classList.add('modal__dialog');
+    thanksModal.innerHTML = `<div class="modal__content">
+        <div class="modal__close" data-close>×</div>
+                <div class="modal__title">${message}</div>
+        </div>`;
+    document.querySelector('.modal').append(thanksModal);
+    setTimeout(() => {
+        thanksModal.remove();
+        prevModalDialog.classList.add('show');
+        prevModalDialog.classList.remove('hide');
+        closeModal();
+    }, 4000);
+}
 
