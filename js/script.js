@@ -5,9 +5,6 @@ window.addEventListener('DOMContentLoaded', () => {
     setClock('.timer', endTime);
     //fuckingAdv();
     //copyOff()
-    new Card("img/tabs/vegy.jpg", "vegy", 'Меню "Фитнес"', 'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!', 14, '.menu .container',).render();
-    new Card("img/tabs/post.jpg", "post", 'Меню "Постное"', 'Меню "Постное" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!', 16, '.menu .container',).render();
-    new Card("img/tabs/elite.jpg", "elite", 'Меню "Премиум"', 'Меню "Премиум" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!', 19, '.menu .container',).render();
 
 });
 
@@ -190,6 +187,42 @@ class Card {
     }
 }
 
+const getResource = async (url) => {
+    const res = await fetch(url);
+    if (!res.ok) {
+        throw Error(`Couldn't fetch ${url}, status ${res.status}`);
+    }
+    return res.json();
+};
+getResource('http://localhost:3000/menu')
+    .then(data => {
+        data.forEach(({img, altimg, title, descr, price}) => {
+            new Card(img, altimg, title, descr, price, '.menu .container').render();
+        })
+    });
+/*
+getResource('http://localhost:3000/menu')
+    .then(data => createCard(data));
+
+function createCard(data) {
+    data.forEach(({img, altimg, title, descr, price}) => {
+        price = price * 40;
+        const element = document.createElement('div');
+        element.classList.add('menu__item');
+        element.innerHTML = `
+        <img src=${img} alt=${altimg}>
+                    <h3 class="menu__item-subtitle">${title}</h3>
+                    <div class="menu__item-descr">${descr}</div>
+                    <div class="menu__item-divider"></div>
+                    <div class="menu__item-price">
+                        <div class="menu__item-cost">Цена:</div>
+                        <div class="menu__item-total"><span>${price}</span> грн/день</div>
+        `;
+        document.querySelector('.menu .container').append(element);
+    })
+}
+*/
+
 //Contact forms
 const forms = document.querySelectorAll('form');
 const msgs = {
@@ -197,10 +230,21 @@ const msgs = {
 };
 
 forms.forEach(item => {
-    postData(item);
+    bindPostData(item);
 });
 
-function postData(form) {
+const postData = async (url, data) => {
+    const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-type': 'application/json; charset=utf-8'
+        },
+        body: data
+    });
+    return res.json();
+};
+
+function bindPostData(form) {
     form.addEventListener('submit', (e) => {
             e.preventDefault();
 
@@ -209,23 +253,12 @@ function postData(form) {
             statusMessage.style.cssText = `
         display: block;
         margin: 0 auto;`;
-            //form.append(statusMessage)
             form.insertAdjacentElement("afterend", statusMessage);
             const formData = new FormData(form);
 
-            const object = {};
-            formData.forEach(function (value, key) {
-                object[key] = value;
-            });
+            const json = JSON.stringify(Object.fromEntries(formData.entries()))
 
-            fetch('js/server.php', {
-                method: 'POST',
-                headers: {
-                    'Content-type': 'application/json; charset=utf-8'
-                },
-                body: JSON.stringify(object)
-            })
-                .then(data => data.text())
+            postData('http://localhost:3000/requests', json)
                 .then(data => {
                     console.log(data);
                     showThanksModal(msgs.success);
@@ -262,3 +295,6 @@ function showThanksModal(message) {
     }, 4000);
 }
 
+fetch('http://localhost:3000/menu')
+    .then(data => data.json())
+    .then(res => console.log(res));
