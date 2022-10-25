@@ -3,6 +3,7 @@ window.addEventListener('DOMContentLoaded', () => {
     showTabContent();
     const endTime = '2022-10-13 14:00:00';
     setClock('.timer', endTime);
+    changeSlideImg();
     //fuckingAdv();
     //copyOff()
 
@@ -194,39 +195,27 @@ const getResource = async (url) => {
     }
     return res.json();
 };
-getResource('http://localhost:3000/menu')
+/*getResource('http://localhost:3000/menu')
     .then(data => {
         data.forEach(({img, altimg, title, descr, price}) => {
             new Card(img, altimg, title, descr, price, '.menu .container').render();
         })
-    });
-/*
-getResource('http://localhost:3000/menu')
-    .then(data => createCard(data));
+    });*/
 
-function createCard(data) {
-    data.forEach(({img, altimg, title, descr, price}) => {
-        price = price * 40;
-        const element = document.createElement('div');
-        element.classList.add('menu__item');
-        element.innerHTML = `
-        <img src=${img} alt=${altimg}>
-                    <h3 class="menu__item-subtitle">${title}</h3>
-                    <div class="menu__item-descr">${descr}</div>
-                    <div class="menu__item-divider"></div>
-                    <div class="menu__item-price">
-                        <div class="menu__item-cost">Цена:</div>
-                        <div class="menu__item-total"><span>${price}</span> грн/день</div>
-        `;
-        document.querySelector('.menu .container').append(element);
+axios.get('http://localhost:3000/menu')
+    .then(data => {
+        console.warn(data)
+        data.data.forEach(({img, altimg, title, descr, price}) => {
+            new Card(img, altimg, title, descr, price, '.menu .container').render();
+        })
     })
-}
-*/
 
 //Contact forms
 const forms = document.querySelectorAll('form');
 const msgs = {
-    loading: 'img/form/spinner.svg', success: 'Спасибо, скоро свяжемся с вами!', failure: 'Что-то пошло не так...'
+    loading: 'img/form/spinner.svg',
+    success: 'Спасибо, скоро свяжемся с вами!',
+    failure: 'Что-то пошло не так...'
 };
 
 forms.forEach(item => {
@@ -298,3 +287,51 @@ function showThanksModal(message) {
 fetch('http://localhost:3000/menu')
     .then(data => data.json())
     .then(res => console.log(res));
+
+//slider
+function changeSlideImg() {
+let slideIndex = 1;
+    const slides = document.querySelectorAll('.offer__slide'),
+            prev = document.querySelector('.offer__slider-prev'),
+            next = document.querySelector('.offer__slider-next'),
+            total = document.querySelector('#total'),
+            current = document.querySelector('#current');
+
+    showSlides(slideIndex);
+
+    if (slides.length < 10) {
+        total.textContent = `/0${slides.length}`;
+    } else {
+        total.textContent = `/${slides.length}`;
+    }
+
+    function showSlides(n) {
+        if (n > slides.length) {
+            slideIndex = 1;
+        }
+        if (n < 1) {
+            slideIndex = slides.length;
+        }
+
+        slides.forEach((item) => item.style.display = 'none');
+
+        slides[slideIndex - 1].style.display = 'block'; // Как ваша самостоятельная работа - переписать на использование классов show/hide
+        
+        if (slideIndex < 10) {
+            current.textContent =  `0${slideIndex}`;
+        } else {
+            current.textContent =  slideIndex;
+        }
+    }
+
+    function plusSlides (n) {
+        showSlides(slideIndex += n);
+    }
+
+    prev.addEventListener('click', function(){
+        plusSlides(-1);
+    });
+
+    next.addEventListener('click', function(){
+        plusSlides(1);
+    })}
