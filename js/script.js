@@ -303,8 +303,8 @@ function changeSlideImg() {
         width = window.getComputedStyle(slidesWrapper).width,
         slidesField = document.querySelector('.offer__slider-inner');
 
-    if (slides.length < 10) {
-        total.textContent = `/0${slides.length}`;
+    if (slideIndex < 10) {
+        total.textContent = `/${slides.length}`;
         current.textContent = `0${slideIndex}`;
     } else {
         total.textContent = '/' + slides.length;
@@ -356,7 +356,7 @@ function changeSlideImg() {
             slideIndex++;
         }
 
-        if (slides.length < 10) {
+        if (slideIndex < 10) {
             current.textContent = `0${slideIndex}`;
         } else {
             current.textContent = slideIndex;
@@ -379,7 +379,7 @@ function changeSlideImg() {
             slideIndex--;
         }
 
-        if (slides.length < 10) {
+        if (slideIndex < 10) {
             current.textContent = `0${slideIndex}`;
         } else {
             current.textContent = slideIndex;
@@ -396,7 +396,7 @@ function changeSlideImg() {
 
             slidesField.style.transform = `translateX(-${offset}px)`;
 
-            if (slides.length < 10) {
+            if (slideIndex < 10) {
                 current.textContent = `0${slideIndex}`;
             } else {
                 current.textContent = slideIndex;
