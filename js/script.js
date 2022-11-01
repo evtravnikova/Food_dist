@@ -144,7 +144,6 @@ function fuckingAdv() {
 //text copying is prohibited
 function copyOff() {
     document.addEventListener('copy', (event) => {
-        console.log(event)
         event.clipboardData.setData("text/plain", "nononono :P");
         event.preventDefault()
     }, false);
@@ -204,7 +203,7 @@ const getResource = async (url) => {
 
 axios.get('http://localhost:3000/menu')
     .then(data => {
-        console.warn(data)
+        //console.warn(data)
         data.data.forEach(({img, altimg, title, descr, price}) => {
             new Card(img, altimg, title, descr, price, '.menu .container').render();
         })
@@ -249,7 +248,7 @@ function bindPostData(form) {
 
             postData('http://localhost:3000/requests', json)
                 .then(data => {
-                    console.log(data);
+                    //console.log(data);
                     showThanksModal(msgs.success);
                     statusMessage.remove();
                 })
@@ -286,7 +285,7 @@ function showThanksModal(message) {
 
 fetch('http://localhost:3000/menu')
     .then(data => data.json())
-    .then(res => console.log(res));
+//.then(res => console.log(res));
 
 //slider
 function changeSlideImg() {
@@ -421,12 +420,40 @@ function changeSlideImg() {
 
     //Calories calculator
     const result = document.querySelector('.calculating__result span');
-    let sex = 'female',
-        height,
-        weight,
-        age,
-        ratio = 1.375;
+    let sex, height, weight, age, ratio;
 
+    if (localStorage.getItem('sex')) {
+        sex = localStorage.getItem('sex');
+    } else {
+        sex = 'female';
+        localStorage.setItem('sex', 'female')
+    }
+
+    if (localStorage.getItem('ratio')) {
+        ratio = localStorage.getItem('ratio');
+    } else {
+        ratio = 1.375;
+        localStorage.setItem('ratio', 1.375);
+    }
+
+
+    function initLocalSettings(selector, activeClass) {
+        const elements = document.querySelectorAll(selector);
+
+        elements.forEach(elem => {
+            elem.classList.remove(activeClass);
+            if (elem.getAttribute('id') === localStorage.getItem('sex')) {
+                elem.classList.add(activeClass);
+            }
+            if (elem.getAttribute('data-ratio') === localStorage.getItem('ratio')) {
+                elem.classList.add(activeClass);
+            }
+        });
+    }
+
+    initLocalSettings('#gender div', 'calculating__choose-item_active');
+    initLocalSettings('.calculating__choose_big div', 'calculating__choose-item_active');
+    
     function calcTotal() {
         if (!sex || !height || !weight || !age || !ratio) {
             result.textContent = '...';
@@ -441,33 +468,42 @@ function changeSlideImg() {
 
     calcTotal();
 
-    function getStaticData(parentSelector, activeClass) {
-        const elements = document.querySelectorAll(`${parentSelector} div`);
-        
+    function getStaticData(selector, activeClass) {
+        const elements = document.querySelectorAll(selector);
+
         elements.forEach(elem => {
             elem.addEventListener('click', (e) => {
-            if (e.target.getAttribute('data-ratio')) {
-                ratio = +e.target.getAttribute('data-ratio');
-            } else {
-                sex = e.target.getAttribute('id');
-            }
+                if (e.target.getAttribute('data-ratio')) {
+                    ratio = +e.target.getAttribute('data-ratio');
+                    localStorage.setItem('ratio', ratio);
+                } else {
+                    sex = e.target.getAttribute('id');
+                    localStorage.setItem('sex', sex);
+                }
 
-            elements.forEach(elem => {
-                elem.classList.remove(activeClass);
+                elements.forEach(elem => {
+                    elem.classList.remove(activeClass);
+                });
+                e.target.classList.add(activeClass);
+
+                calcTotal();
             });
-            e.target.classList.add(activeClass);
-            
-            calcTotal();
-        })
-        })
+        });
     }
 
-    getStaticData('#gender', 'calculating__choose-item_active');
-    getStaticData('.calculating__choose_big', 'calculating__choose-item_active');
+    getStaticData('#gender div', 'calculating__choose-item_active');
+    getStaticData('.calculating__choose_big div', 'calculating__choose-item_active');
 
     function getDynamicData(selector) {
         const input = document.querySelector(selector);
         input.addEventListener('input', () => {
+
+            if (input.value.match(/\D/g)) {
+                input.style.border = '1px solid red';
+            } else {
+                input.style.border = 'none';
+            }
+
             switch (input.getAttribute('id')) {
                 case 'height':
                     height = +input.value;
@@ -487,4 +523,3 @@ function changeSlideImg() {
     getDynamicData('#weight');
     getDynamicData('#age');
 }
-
