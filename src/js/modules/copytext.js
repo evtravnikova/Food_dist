@@ -9,4 +9,4 @@ function copyOff() {
   //copyOff()
 }
 
-module.exports = copytext;
+export default copytext;

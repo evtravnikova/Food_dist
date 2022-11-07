@@ -105,4 +105,4 @@ function caloriesCalc() {
     getDynamicData('#age');
 }
 
-module.exports = caloriesCalc;
+export default caloriesCalc;

@@ -1,7 +1,5 @@
-function timer() {
+function timer(id, deadline) {
 //Timer
-    const endTime = '2022-12-13 14:00:00';
-
     function getTimeRemainder(deadline) {
 
         let days, hours, minutes, seconds;
@@ -54,7 +52,7 @@ function timer() {
         }
     }
 
-    setClock('.timer', endTime);
+    setClock(id, deadline);
 }
 
-module.exports = timer;
+export default timer;

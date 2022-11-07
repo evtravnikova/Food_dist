@@ -8,4 +8,4 @@ function fuckingAdv() {
 //fuckingAdv();
 }
 
-module.exports = advertising;
+export default advertising;
